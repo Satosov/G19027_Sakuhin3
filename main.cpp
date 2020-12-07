@@ -1,4 +1,4 @@
-﻿#include "DxLib.h"
+#include "DxLib.h"
 
 #define WINDOW_WIDTH	1000
 #define WINDOW_HEIGHT	500
@@ -6,15 +6,14 @@
 #define FPS				60
 
 #define WINDOW_BAR_ON	0
-#define GAME_TITLE		"直進する巨大兵器"
-
+#define GAME_TITLE		"���i���鋐�啺��"
 
 
 VOID MY_START(VOID);
 VOID MY_PLAY(VOID);
 VOID MY_END(VOID);
 
-VOID MY_ALL_KEYDOWN_UPDATE(VOID);		//キーの入力状態を更新
+VOID MY_ALL_KEYDOWN_UPDATE(VOID);
 BOOL MY_KEY_DOWN(int);
 BOOL MY_KEY_UP(int);
 BOOL MY_KEYDOWN_KEEP(int, int);
@@ -35,14 +34,15 @@ enum SCENE
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	ChangeWindowMode(TRUE);									//ウィンドウモードに設定する
-	SetGraphMode(WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BIT);	//縦500、横1000、カラービット32でウィンドウを表示する
-	SetWindowStyleMode(WINDOW_BAR_ON);						//タイトルバーをデフォルトにする
-	SetMainWindowText(TEXT(GAME_TITLE));					//タイトル
-	SetAlwaysRunFlag(TRUE);									//非アクティブでも実行する
+	ChangeWindowMode(TRUE);
+	SetGraphMode(WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BIT);
 
-	if (DxLib_Init() == 1) { return -1; }					//DxLib初期化処理
-	SetDrawScreen(DX_SCREEN_BACK);							//Draw系の関数を裏画面に描画する
+	SetMainWindowText(TEXT(GAME_TITLE));
+	SetAlwaysRunFlag(TRUE);
+	SetWindowStyleMode(WINDOW_BAR_ON);
+
+	if (DxLib_Init() == 1) { return -1; }
+	SetDrawScreen(DX_SCREEN_BACK);
 
 	gamescene = SCENESTART;
 

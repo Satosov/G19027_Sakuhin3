@@ -1,4 +1,4 @@
-#include "DxLib.h"
+ï»¿#include "DxLib.h"
 
 #define WINDOW_WIDTH	1000
 #define WINDOW_HEIGHT	500
@@ -6,7 +6,7 @@
 #define FPS				60
 
 #define WINDOW_BAR_ON	0
-#define GAME_TITLE		"’¼i‚·‚é‹‘å•ºŠí"
+#define GAME_TITLE		"ç›´é€²ã™ã‚‹å·¨å¤§å…µå™¨"
 
 
 
@@ -14,7 +14,7 @@ VOID MY_START(VOID);
 VOID MY_PLAY(VOID);
 VOID MY_END(VOID);
 
-VOID MY_ALL_KEYDOWN_UPDATE(VOID);		//ƒL[‚Ì“ü—Íó‘Ô‚ðXV
+VOID MY_ALL_KEYDOWN_UPDATE(VOID);		//ã‚­ãƒ¼ã®å…¥åŠ›çŠ¶æ…‹ã‚’æ›´æ–°
 BOOL MY_KEY_DOWN(int);
 BOOL MY_KEY_UP(int);
 BOOL MY_KEYDOWN_KEEP(int, int);
@@ -35,22 +35,22 @@ enum SCENE
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	ChangeWindowMode(TRUE);									//ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚ÉÝ’è‚·‚é
-	SetGraphMode(WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BIT);	//c500A‰¡1000AƒJƒ‰[ƒrƒbƒg32‚ÅƒEƒBƒ“ƒhƒE‚ð•\Ž¦‚·‚é
-	SetWindowStyleMode(WINDOW_BAR_ON);						//ƒ^ƒCƒgƒ‹ƒo[‚ðƒfƒtƒHƒ‹ƒg‚É‚·‚é
-	SetMainWindowText(TEXT(GAME_TITLE));					//ƒ^ƒCƒgƒ‹
-	SetAlwaysRunFlag(TRUE);									//”ñƒAƒNƒeƒBƒu‚Å‚àŽÀs‚·‚é
+	ChangeWindowMode(TRUE);									//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã«è¨­å®šã™ã‚‹
+	SetGraphMode(WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BIT);	//ç¸¦500ã€æ¨ª1000ã€ã‚«ãƒ©ãƒ¼ãƒ“ãƒƒãƒˆ32ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã™ã‚‹
+	SetWindowStyleMode(WINDOW_BAR_ON);						//ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã«ã™ã‚‹
+	SetMainWindowText(TEXT(GAME_TITLE));					//ã‚¿ã‚¤ãƒˆãƒ«
+	SetAlwaysRunFlag(TRUE);									//éžã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã§ã‚‚å®Ÿè¡Œã™ã‚‹
 
-	if (DxLib_Init() == 1) { return -1; }					//DxLib‰Šú‰»ˆ—
-	SetDrawScreen(DX_SCREEN_BACK);							//DrawŒn‚ÌŠÖ”‚ð— ‰æ–Ê‚É•`‰æ‚·‚é
-	
+	if (DxLib_Init() == 1) { return -1; }					//DxLibåˆæœŸåŒ–å‡¦ç†
+	SetDrawScreen(DX_SCREEN_BACK);							//Drawç³»ã®é–¢æ•°ã‚’è£ç”»é¢ã«æç”»ã™ã‚‹
+
 	gamescene = SCENESTART;
 
 	while (TRUE)
 	{
 		ClearDrawScreen();
-		MY_ALL_KEYDOWN_UPDATE();
 		if (ClearDrawScreen() != 0) { break; }
+		MY_ALL_KEYDOWN_UPDATE();
 
 		switch (gamescene)
 		{
@@ -88,7 +88,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
-VOID MY_ALL_KEY_DOWN_UP(VOID)
+VOID MY_ALL_KEYDOWN_UPDATE(VOID)
 {
 	char TempKey[256];
 
@@ -140,7 +140,7 @@ BOOL MY_KEY_UP(int KEY_INPUT_)
 BOOL MY_KEYDOWN_KEEP(int KEY_INPUT_, int DownTime)
 {
 	int UpdateTime = DownTime * FPS;
-	if(AllKeyState[KEY_INPUT_]>UpdateTime)
+	if (AllKeyState[KEY_INPUT_] > UpdateTime)
 	{
 		return TRUE;
 	}

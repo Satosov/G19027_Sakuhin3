@@ -1,3 +1,4 @@
+#pragma warning(disable:4010)
 #include "DxLib.h"
 
 #define WINDOW_WIDTH	1000
@@ -10,8 +11,11 @@
 
 
 VOID MY_START(VOID);
+VOID MY_START_DRAW(VOID);
 VOID MY_PLAY(VOID);
+VOID MY_PLAY_DRAW(VOID);
 VOID MY_END(VOID);
+VOID MY_END_DRAW(VOID);
 
 VOID MY_ALL_KEYDOWN_UPDATE(VOID);
 BOOL MY_KEY_DOWN(int);
@@ -48,32 +52,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	while (TRUE)
 	{
-		ClearDrawScreen();
+		if (ProcessMessage() != 0) { break; }
 		if (ClearDrawScreen() != 0) { break; }
+
 		MY_ALL_KEYDOWN_UPDATE();
+		ClearDrawScreen();
 
 		switch (gamescene)
 		{
 		case SCENESTART:
-			DrawString(0, 0, "start\n", RGB(255, 255, 255));
-			if (AllKeyState[KEY_INPUT_RETURN] == 1)
-			{
-				gamescene = SCENEPLAYING;
-			}
+			MY_START();
+			MY_START_DRAW();
 			break;
 		case SCENEPLAYING:
-			DrawString(0, 0, "play\n", RGB(255, 255, 255));
-			if (AllKeyState[KEY_INPUT_RETURN] == 1)
-			{
-				gamescene = SCENEEND;
-			}
+			MY_PLAY();
+			MY_PLAY_DRAW();
 			break;
 		case SCENEEND:
-			DrawString(0, 0, "end\n", RGB(255, 255, 255));
-			if (AllKeyState[KEY_INPUT_RETURN] == 1)
-			{
-				gamescene = SCENESTART;
-			}
+			MY_END();
+			MY_END_DRAW();
 			break;
 		}
 		WaitTimer(1000 / FPS);
@@ -148,4 +145,54 @@ BOOL MY_KEYDOWN_KEEP(int KEY_INPUT_, int DownTime)
 	{
 		return FALSE;
 	}
+}
+
+VOID MY_START(VOID)
+{
+	if (AllKeyState[KEY_INPUT_RETURN] == 1)
+	{
+		gamescene = SCENEPLAYING;
+	}
+	return;
+}
+
+VOID MY_START_DRAW(VOID)
+{
+	DrawString(0, 0, "start\n", RGB(255, 255, 255));
+
+	return;
+}
+
+VOID MY_PLAY(VOID)
+{
+	if (AllKeyState[KEY_INPUT_RETURN] == 1)
+	{
+		gamescene = SCENEEND;
+	}
+
+	return;
+}
+
+VOID MY_PLAY_DRAW(VOID)
+{
+	DrawString(0, 0, "play\n", RGB(255, 255, 255));
+
+	return;
+}
+
+VOID MY_END(VOID)
+{
+	if (AllKeyState[KEY_INPUT_RETURN] == 1)
+	{
+		gamescene = SCENESTART;
+	}
+
+	return;
+}
+
+VOID MY_END_DRAW(VOID)
+{
+	DrawString(0, 0, "end\n", RGB(255, 255, 255));
+
+	return;
 }

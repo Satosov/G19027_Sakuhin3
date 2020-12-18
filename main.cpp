@@ -9,8 +9,10 @@
 #define WINDOW_BAR_ON	0
 #define GAME_TITLE		"íºêiÇ∑ÇÈãêëÂï∫äÌ"
 
+#define SHOT_MAX		4
 
 VOID MY_START(VOID);
+
 VOID MY_START_DRAW(VOID);
 VOID MY_PLAY(VOID);
 VOID MY_PLAY_DRAW(VOID);
@@ -48,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (DxLib_Init() == 1) { return -1; }
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	gamescene = SCENESTART;
+	gamescene = 1;
 
 	while (TRUE)
 	{
@@ -76,8 +78,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		WaitTimer(1000 / FPS);
 		ScreenFlip();
 
-		if (AllKeyState[KEY_INPUT_ESCAPE] == 1)
-			break;
 	}
 
 	DxLib_End();
@@ -101,7 +101,7 @@ VOID MY_ALL_KEYDOWN_UPDATE(VOID)
 		{
 			AllKeyState[i]++;
 		}
-		if (TempKey[i] != 0)
+		else
 		{
 			AllKeyState[i] = 0;
 		}
@@ -158,14 +158,14 @@ VOID MY_START(VOID)
 
 VOID MY_START_DRAW(VOID)
 {
-	DrawString(0, 0, "start\n", RGB(255, 255, 255));
+	DrawString(0, 0, "start\npush :ENTER", RGB(255, 255, 255));
 
 	return;
 }
 
 VOID MY_PLAY(VOID)
 {
-	if (AllKeyState[KEY_INPUT_RETURN] == 1)
+	if (AllKeyState[KEY_INPUT_SPACE] == 1)
 	{
 		gamescene = SCENEEND;
 	}
@@ -175,14 +175,14 @@ VOID MY_PLAY(VOID)
 
 VOID MY_PLAY_DRAW(VOID)
 {
-	DrawString(0, 0, "play\n", RGB(255, 255, 255));
+	DrawString(0, 0, "play\npush :SPACE", RGB(255, 255, 255));
 
 	return;
 }
 
 VOID MY_END(VOID)
 {
-	if (AllKeyState[KEY_INPUT_RETURN] == 1)
+	if (AllKeyState[KEY_INPUT_ESCAPE] == 1)
 	{
 		gamescene = SCENESTART;
 	}
@@ -192,7 +192,7 @@ VOID MY_END(VOID)
 
 VOID MY_END_DRAW(VOID)
 {
-	DrawString(0, 0, "end\n", RGB(255, 255, 255));
+	DrawString(0, 0, "end\npush :ESCAPE", RGB(255, 255, 255));
 
 	return;
 }

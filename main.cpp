@@ -1,4 +1,3 @@
-//20210108
 #pragma warning(disable:4010)
 #include "DxLib.h"
 
@@ -10,10 +9,16 @@
 #define WINDOW_BAR_ON	0
 #define GAME_TITLE		"直進する巨大兵器"
 
-#define SHOT_MAX		4
+#define MAP_KIND_MAX	3
+
+#define SHOTGUN_MAX		5		//散弾は最大5発リロード可
+#define ROCKET_MAX		1		//最大1発
+#define MACHINEGUN_MAX	500		//機関銃は最大500発リロード可
+#define ENERGYGUN_MAX	1		//最大1発
+
+#define ENEMY_HELI_WEAPON_MAX	3
 
 VOID MY_START(VOID);
-
 VOID MY_START_DRAW(VOID);
 VOID MY_PLAY(VOID);
 VOID MY_PLAY_DRAW(VOID);
@@ -37,6 +42,35 @@ enum SCENE
 	SCENEEND = 3,
 	SCENEESCAPE = 4
 };
+
+typedef struct MY_IMAGE
+{
+	int Handle;		//画像の管理番号
+	int x;
+	int y;
+	int width;		//画像の幅
+	int height;		//画像の高さ
+	double radian;	//武器の角度
+	BOOL IsView;
+};
+
+MY_IMAGE image_background;
+MY_IMAGE image_player;			//自機
+MY_IMAGE image_player_weapon;	//操縦できる武器
+MY_IMAGE image_player_tama;		//プレイヤーの弾
+MY_IMAGE image_enemy;			//敵機
+MY_IMAGE image_enemy_tama;		//敵の弾
+
+typedef struct CHARA_INFO		//キャラクターのデータ
+{
+	int hp;
+	int speed;
+};
+
+CHARA_INFO player;		//プレイヤー
+CHARA_INFO enemy_heli;	//ヘリコプター敵
+CHARA_INFO enemy_jet;	//近距離型敵
+CHARA_INFO enemy_drone;	//テクニック型敵
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -170,6 +204,10 @@ VOID MY_PLAY(VOID)
 	{
 		gamescene = SCENEEND;
 	}
+	//if (AllKeyState[KEY_INPUT_1] == 1)
+	//{
+	//	
+	//}
 
 	return;
 }

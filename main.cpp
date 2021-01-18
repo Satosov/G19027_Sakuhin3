@@ -52,6 +52,22 @@ typedef struct MY_IMAGE
 	int height;		//画像の高さ
 	double radian;	//武器の角度
 	BOOL IsView;
+}IMAGE;
+
+
+typedef struct WEAPON_INFO
+{
+	IMAGE image;
+
+	BOOL SHOT;
+	int reload;
+	int reload_MAX;
+};
+
+typedef struct CHARA_INFO		//キャラクターのデータ
+{
+	int hp;
+	int speed;
 };
 
 MY_IMAGE image_background;
@@ -61,16 +77,12 @@ MY_IMAGE image_player_tama;		//プレイヤーの弾
 MY_IMAGE image_enemy;			//敵機
 MY_IMAGE image_enemy_tama;		//敵の弾
 
-typedef struct CHARA_INFO		//キャラクターのデータ
-{
-	int hp;
-	int speed;
-};
-
 CHARA_INFO player;		//プレイヤー
 CHARA_INFO enemy_heli;	//ヘリコプター敵
 CHARA_INFO enemy_jet;	//近距離型敵
 CHARA_INFO enemy_drone;	//テクニック型敵
+
+int distance;		//武器から弾の距離
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -86,6 +98,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	gamescene = 1;
+
+	image_player_weapon.x = 50;
+	image_player_weapon.y = 100;
+
 
 	while (TRUE)
 	{
@@ -184,6 +200,7 @@ BOOL MY_KEYDOWN_KEEP(int KEY_INPUT_, int DownTime)
 
 VOID MY_START(VOID)
 {
+
 	if (AllKeyState[KEY_INPUT_RETURN] == 1)
 	{
 		gamescene = SCENEPLAYING;
@@ -200,14 +217,20 @@ VOID MY_START_DRAW(VOID)
 
 VOID MY_PLAY(VOID)
 {
+	image_player.x = 100;
+	image_player.y = 150;
+
 	if (AllKeyState[KEY_INPUT_SPACE] == 1)
 	{
 		gamescene = SCENEEND;
 	}
-	//if (AllKeyState[KEY_INPUT_1] == 1)
-	//{
-	//	
-	//}
+	if (AllKeyState[KEY_INPUT_1] == 1)
+	{
+		if (image_player_tama.IsView == FALSE)
+		{
+			image_player_tama.IsView == TRUE;
+		}
+	}
 
 	return;
 }
@@ -215,6 +238,14 @@ VOID MY_PLAY(VOID)
 VOID MY_PLAY_DRAW(VOID)
 {
 	DrawString(0, 0, "play\npush :SPACE", RGB(255, 255, 255));
+
+
+	DrawBox(image_player.x, image_player.y, 200, 499, RGB(255, 0, 0), TRUE);	//自機の当たり判定
+
+	if (image_player_tama.IsView == TRUE)
+	{
+		//DrawCircle()
+	}
 
 	return;
 }

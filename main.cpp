@@ -11,10 +11,11 @@
 
 #define MAP_KIND_MAX	3
 
-#define SHOTGUN_MAX		5		//散弾は最大5発リロード可
-#define ROCKET_MAX		1		//最大1発
-#define MACHINEGUN_MAX	500		//機関銃は最大500発リロード可
-#define ENERGYGUN_MAX	1		//最大1発
+#define SG_MAX		5		//散弾は最大5発 要リロード
+//#define ROCKET_MAX		1		//最大1発
+//#define MG_MAX	500		//機関銃は最大500発 要リロード
+//#define EG_MAX	1		//最大1発
+#define TAMA_MAX	255
 
 #define ENEMY_HELI_WEAPON_MAX	3
 
@@ -54,35 +55,45 @@ typedef struct MY_IMAGE
 	BOOL IsView;
 }IMAGE;
 
-
-typedef struct WEAPON_INFO
+typedef struct STRUCT_TAMA
 {
-	IMAGE image;
+	char path[SG_MAX];
 
-	BOOL SHOT;
-	int reload;
-	int reload_MAX;
-};
+	int x;
+	int y;
+	BOOL IsView;
+	int speed;
+}TAMA;
 
 typedef struct CHARA_INFO		//キャラクターのデータ
 {
+	IMAGE image;
 	int hp;
 	int speed;
-};
 
-MY_IMAGE image_background;
-MY_IMAGE image_player;			//自機
-MY_IMAGE image_player_weapon;	//操縦できる武器
-MY_IMAGE image_player_tama;		//プレイヤーの弾
-MY_IMAGE image_enemy;			//敵機
-MY_IMAGE image_enemy_tama;		//敵の弾
+	BOOL Canshot;
+	int ShotReloadCnt;
+	int ShotReloadCntMAX;
 
-CHARA_INFO player;		//プレイヤー
-CHARA_INFO enemy_heli;	//ヘリコプター敵
-CHARA_INFO enemy_jet;	//近距離型敵
-CHARA_INFO enemy_drone;	//テクニック型敵
+	TAMA tama[SG_MAX];
 
-int distance;		//武器から弾の距離
+	RECT coll;
+}CHARA;
+
+CHARA player;		//プレイヤー
+
+//MY_IMAGE image_background;
+//MY_IMAGE image_player;			//自機
+//MY_IMAGE image_player_weapon;	//操縦できる武器
+//MY_IMAGE image_player_tama;		//プレイヤーの弾
+//MY_IMAGE image_enemy;			//敵機
+//MY_IMAGE image_enemy_tama;		//敵の弾
+//
+//CHARA_INFO enemy_heli;	//ヘリコプター敵
+//CHARA_INFO enemy_jet;	//近距離型敵
+//CHARA_INFO enemy_drone;	//テクニック型敵
+
+//int distance;		//武器から弾の距離
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -99,8 +110,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	gamescene = 1;
 
-	image_player_weapon.x = 50;
-	image_player_weapon.y = 100;
+	//image_player_weapon.x = 160;
+	//image_player_weapon.y = 160;
+	player.ShotReloadCnt = 0;
+	player.ShotReloadCntMAX = 30;	//今のところあまり意味なし
 
 
 	while (TRUE)
@@ -205,6 +218,12 @@ VOID MY_START(VOID)
 	{
 		gamescene = SCENEPLAYING;
 	}
+
+	for (int cnt = 0; cnt < SG_MAX; cnt++)
+	{
+		player.tama[cnt].IsView = FALSE;
+	}
+
 	return;
 }
 
@@ -212,13 +231,16 @@ VOID MY_START_DRAW(VOID)
 {
 	DrawString(0, 0, "start\npush :ENTER", RGB(255, 255, 255));
 
+	//DrawGraph()		//背景の描画予定
+
 	return;
 }
 
 VOID MY_PLAY(VOID)
 {
-	image_player.x = 100;
-	image_player.y = 150;
+	player.image.x = 100;		//仮
+	player.image.y = 150;
+
 
 	if (AllKeyState[KEY_INPUT_SPACE] == 1)
 	{
@@ -226,11 +248,36 @@ VOID MY_PLAY(VOID)
 	}
 	if (AllKeyState[KEY_INPUT_1] == 1)
 	{
-		if (image_player_tama.IsView == FALSE)
+		if (player.Canshot == TRUE)		//撃てるとき
 		{
-			image_player_tama.IsView == TRUE;
+			player.Canshot = FALSE;
+			
+			for (int cnt = 0; cnt < SG_MAX; cnt++)
+			{
+				if (player.tama[cnt].IsView == FALSE)
+				{
+					player.tama[cnt].x = 170;		//仮座標
+					player.tama[cnt].y = 170;
+					player.tama[cnt].IsView = TRUE;
+					//break;
+				}
+			}
 		}
 	}
+
+	//弾が打てないとき
+	if (player.Canshot == FALSE)
+	{
+		if (player.ShotReloadCnt == player.ShotReloadCntMAX)
+		{
+			player.ShotReloadCnt = 0;
+			player.Canshot = TRUE;		//リロード完了
+		}
+
+		player.ShotReloadCnt++;
+	}
+
+	
 
 	return;
 }
@@ -240,11 +287,31 @@ VOID MY_PLAY_DRAW(VOID)
 	DrawString(0, 0, "play\npush :SPACE", RGB(255, 255, 255));
 
 
-	DrawBox(image_player.x, image_player.y, 200, 499, RGB(255, 0, 0), TRUE);	//自機の当たり判定
+	DrawBox(player.image.x, player.image.y, 200, 499, RGB(255, 0, 0), TRUE);	//自機の当たり判定
 
-	if (image_player_tama.IsView == TRUE)
+	for (int cnt = 0; cnt < SG_MAX; cnt++)
 	{
-		//DrawCircle()
+		if (player.tama[cnt].IsView == TRUE)
+		{
+			DrawCircle(
+				player.tama[cnt].x,
+				player.tama[cnt].y,
+				5, RGB(0, 255, 255), TRUE);
+		}
+		if (player.tama[2].x > 1000
+			|| player.tama[2].y > 500
+			|| player.tama[2].y < 0)
+		{
+			player.tama[cnt].IsView = FALSE;	//画面外にでると終了
+		}
+		else
+		{
+			player.tama[0].x += 4; player.tama[0].y -= 2;
+			player.tama[1].x += 4; player.tama[1].y -= 1;
+			player.tama[2].x += 4;
+			player.tama[3].x += 4; player.tama[3].y += 1;
+			player.tama[4].x += 4; player.tama[4].y += 2;
+		}
 	}
 
 	return;

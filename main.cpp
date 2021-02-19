@@ -51,8 +51,6 @@ typedef struct MY_IMAGE
 	int y;
 	int x2;			//四角形
 	int y2;
-	int width;		//画像の幅
-	int height;		//画像の高さ
 	double radian;	//武器の角度
 	BOOL IsView;
 }IMAGE;
@@ -63,6 +61,7 @@ typedef struct STRUCT_TAMA
 
 	int x;
 	int y;
+	int range = 5;		//範囲
 	BOOL IsView;
 	double radian;		//弾の角度
 }TAMA;
@@ -252,8 +251,11 @@ VOID MY_PLAY(VOID)
 {
 	for (int cnt = 0; cnt < ENEMY_MAX; cnt++)		//プレイが始まると同時に描画開始
 	{
-		enemy[cnt].image.IsView = TRUE;
-		break;
+		if (enemy[cnt].image.IsView == FALSE)
+		{
+			enemy[cnt].image.IsView = TRUE;
+			break;
+		}
 	}
 	player.image.x = 100;		//仮
 	player.image.y = 150;
@@ -344,7 +346,7 @@ VOID MY_PLAY_DRAW(VOID)
 			DrawCircle(
 				player.sgtama[cnt].x,
 				player.sgtama[cnt].y,
-				5, RGB(0, 255, 255), TRUE);
+				player.sgtama[cnt].range, RGB(0, 255, 255), TRUE);
 		}
 		if (player.sgtama[2].x > WINDOW_WIDTH
 			|| player.sgtama[2].y > WINDOW_HEIGHT
@@ -362,6 +364,7 @@ VOID MY_PLAY_DRAW(VOID)
 		}
 	}
 
+	int reloadcnt = 0;
 	//**************************マシンガン********************
 	for (int cnt = 0; cnt < MG_MAX; cnt++)
 	{
@@ -370,7 +373,7 @@ VOID MY_PLAY_DRAW(VOID)
 			DrawCircle(
 				player.mgtama[cnt].x,
 				player.mgtama[cnt].y,
-				4, RGB(255, 255, 0), TRUE);
+				player.mgtama[cnt].range, RGB(255, 255, 0), TRUE);
 		}
 		if (player.mgtama[cnt].x > WINDOW_WIDTH
 			|| player.mgtama[cnt].y > WINDOW_HEIGHT
@@ -380,19 +383,34 @@ VOID MY_PLAY_DRAW(VOID)
 		}
 		else
 		{
-			player.mgtama[cnt].x += 8;
+			if (reloadcnt >= 0)
+			{
+			player.mgtama[0].x += 8;
+			}
+			if (reloadcnt >= 30)
+			{
+				player.mgtama[1].x += 8;
+			}
+			reloadcnt++;
 		}
 	}
 
 	//敵の描画開始
-	if (enemy[0].image.IsView == TRUE)
+	for (int cnt = 0; cnt < ENEMY_MAX; cnt++)
 	{
-		DrawBox(enemy[0].image.x, enemy[0].image.y, enemy[0].image.x2, enemy[0].image.y2, RGB(0, 0, 255), TRUE);	//敵機仮
+		if (enemy[cnt].image.IsView == TRUE)
+		{
+			DrawBox(enemy[0].image.x, enemy[0].image.y, enemy[0].image.x2, enemy[0].image.y2, RGB(0, 0, 255), TRUE);	//敵機仮
 
-			//例　image_tama.x < image_husen[i].x + image_husen[i].width&&
-			//			image_tama.y<image_husen[i].y + image_husen[i].height &&
-			//			image_tama.x + image_tama.width>image_husen[i].x &&
-			//			image_tama.y + image_tama.height>image_husen[i].y
+				//例　image_tama.x < image_husen[i].x + image_husen[i].width&&
+				//			image_tama.y<image_husen[i].y + image_husen[i].height &&
+				//			image_tama.x + image_tama.width>image_husen[i].x &&
+				//			image_tama.y + image_tama.height>image_husen[i].y
+		}
+		//if (player.sgtama[2].IsView==TRUE)
+		//{
+		//	enemy[cnt].image.IsView = FALSE;
+		//}
 	}
 
 	return;
